@@ -1,0 +1,25 @@
+/* Import Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add custom base styles */
+body {
+  @apply m-4; /* Apply a margin of 1rem (16px) to the body */
+}
+
+/* Optional: Reset some default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', sans-serif; /* Use a custom font if desired */
+  background-color: #f9fafb; /* Light gray background color */
+}
