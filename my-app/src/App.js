@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import MainForm from './pages/MainForm';
+import MainForm from './pages/ApplicationFormPage';
 // import ConfirmationPage from './components/ConfirmationPage';
 
 function App() {
