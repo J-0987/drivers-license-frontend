@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PersonalDetails from '../components/PersonalDetails';
+import PersonalDetails from '../components/form-sections/PersonalDetails';
 // import AddressDetails from './AddressDetails';
 // import MedicalConditions from './MedicalConditions';
 // import DeclarationSection from './DeclarationSection';
