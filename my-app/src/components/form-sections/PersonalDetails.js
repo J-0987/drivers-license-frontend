@@ -147,7 +147,7 @@ const PersonalDetails = () => {
           </div>
         </div>
       </div>
-      <button type="submit" className="mt-6 bg-indigo-600 text-white py-2 px-4 rounded-md">Submit</button>
+    
     </form>
   );
 };

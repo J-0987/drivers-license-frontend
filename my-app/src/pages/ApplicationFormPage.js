@@ -82,7 +82,6 @@ const MainForm = () => {
           handleNestedInputChange('addressDetails', nestedSection, field, value)
         }
       />
-      <button type="submit">Submit</button>
     </form>
   );
 };
