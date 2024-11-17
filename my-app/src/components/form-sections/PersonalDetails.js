@@ -11,28 +11,9 @@ const PersonalDetails = () => {
   const [height, setHeight] = useState('');
   const [errors, setErrors] = useState({});
 
-  const validate = () => {
-    const newErrors = {};
-    if (!firstName) newErrors.firstName = 'First name is required';
-    if (!middleName) newErrors.middleName = 'Middle name is required';
-    if (!lastName) newErrors.lastName = 'Last name is required';
-    if (!dob) newErrors.dob = 'Date of birth is required';
-    if (!sex) newErrors.sex = 'Sex is required';
-    if (!height) newErrors.height = 'Height is required';
-    console.log('Validation errors:', newErrors); 
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      alert('Please fix the highlighted errors before submitting.');
-    }
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = (e) => {
 
-    if (validate()) {
-      // Submit the form
-      console.log('Form submitted successfully');
-    }
+
     e.preventDefault();
   };
 
@@ -49,7 +30,8 @@ const PersonalDetails = () => {
             <label htmlFor="first-name" className="block text-sm/6 font-medium text-gray-900">First name</label>
             <div className="mt-2">
               <input
-                type="text"
+        
+                type="text required"
                 name="first-name"
                 id="first-name"
                 autoComplete="given-name"
@@ -57,7 +39,7 @@ const PersonalDetails = () => {
                 onChange={(e) => setFirstName(e.target.value)}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
               />
-              {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+     
             </div>
           </div>
           {/* middle name */}
@@ -73,7 +55,7 @@ const PersonalDetails = () => {
                 onChange={(e) => setMiddleName(e.target.value)}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
               />
-              {errors.middleName && <p className="text-red-500 text-xs mt-1">{errors.middleName}</p>}
+           
             </div>
           </div>
           {/* last name */}
@@ -89,7 +71,7 @@ const PersonalDetails = () => {
                 onChange={(e) => setLastName(e.target.value)}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
               />
-              {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+    
             </div>
           </div>
           {/* DOB */}
@@ -105,7 +87,7 @@ const PersonalDetails = () => {
                 dateFormat="dd/MM/yyyy"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
               />
-              {errors.dob && <p className="text-red-500 text-xs mt-1">{errors.dob}</p>}
+           
             </div>
           </div>
           {/* sex */}
@@ -124,7 +106,7 @@ const PersonalDetails = () => {
   <option value="Female">Female</option>
   <option value="Other">Other</option>
 </select>
-{errors.sex && <p className="text-red-500 text-xs mt-1">{errors.sex}</p>}
+
 
             </div>
           </div>
@@ -142,12 +124,12 @@ const PersonalDetails = () => {
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               />
 
-              {errors.height && <p className="text-red-500 text-xs mt-1">{errors.height}</p>}
+            
             </div>
           </div>
         </div>
       </div>
-      <button type="submit" className="mt-6 bg-indigo-600 text-white py-2 px-4 rounded-md">Submit</button>
+    
     </form>
   );
 };
