@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainForm from './pages/ApplicationFormPage';
+import { ApplicationList } from './pages/ApplicationListPage';
 // import ConfirmationPage from './components/ConfirmationPage';
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<MainForm />} />
+          <Route path ='/list' element ={<ApplicationList />} />
           {/* <Route path="/confirmation" element={<ConfirmationPage />} /> */}
         </Routes>
       </div>
