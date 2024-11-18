@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -57,15 +57,14 @@ const PersonalDetails = ({ data, onInputChange, errors }) => {
           Date of Birth
         </label>
         <div className="mt-2">
-          <input
-            type="date"
-            name="dob"
-            id="dob"
-            value={data.dateOfBirth}
-            onChange={(e) => onInputChange('dateOfBirth', e.target.value)}
+          <DatePicker
+            selected={data.dateOfBirth}
+            placeholderText='YYYY-MM-DD'
+            onChange={(date) => onInputChange('dateOfBirth', date)}
+            dateFormat="yyyy-MM-dd"
             className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset 
-              ${errors.dateOfBirth ? 'ring-red-500' : 'ring-gray-300'} 
-              placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6`}
+    ${errors.dateOfBirth ? 'ring-red-500' : 'ring-gray-300'} 
+    placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6`}
           />
           {errors.dateOfBirth && (
             <span className="mt-2 text-sm text-red-600">{errors.dateOfBirth}</span>
