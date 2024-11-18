@@ -39,42 +39,8 @@ const MainForm = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const validateForm = () => {
-    const newErrors = {};
 
-    // Personal Details Validation
-    if (!formData.personalDetails.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
-    } else if (formData.personalDetails.lastName.length < 2) {
-      newErrors.lastName = 'Last name must be at least 2 characters';
-    }
-
-    if (!formData.personalDetails.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
-    }
-
-    if (!formData.personalDetails.dateOfBirth) {
-      newErrors.dateOfBirth = 'Date of birth is required';
-    } else {
-      const dob = new Date(formData.personalDetails.dateOfBirth);
-      const today = new Date();
-      if (dob >= today) {
-        newErrors.dateOfBirth = 'Invalid date of birth';
-      }
-    }
-
-    if (!formData.personalDetails.sex) {
-      newErrors.sex = 'Sex is required';
-    }
-
-    if (!formData.personalDetails.height) {
-      newErrors.height = 'Height is required';
-    } else if (isNaN(formData.personalDetails.height) || 
-               formData.personalDetails.height < 0 || 
-               formData.personalDetails.height > 300) {
-      newErrors.height = 'Invalid height';
-    }
-    };
+   
   const handleInputChange = (section, field, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -129,9 +95,13 @@ const MainForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      console.log('Form has errors');
+      return;
+    }
  
       try {
-        const response = await fetch('https://your-backend-api.com/save', {
+        const response = await fetch('http://127.0.0.1:8000/api/driver-license/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
