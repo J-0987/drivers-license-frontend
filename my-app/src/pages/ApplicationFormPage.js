@@ -168,6 +168,7 @@ const MainForm = () => {
         console.log('Sending data:', formattedData);
 
         const response = await driverLicenseApi.createLicense(formattedData);
+        console.log('Submission response:', response);
         
         toast.success('License application submitted successfully!');
         handleReset();
