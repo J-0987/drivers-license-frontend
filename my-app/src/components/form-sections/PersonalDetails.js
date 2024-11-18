@@ -1,5 +1,5 @@
 
-import DatePicker from 'react-datepicker';
+
 import 'react-datepicker/dist/react-datepicker.css';
 
 const PersonalDetails = ({ data, onInputChange, errors }) => {
@@ -51,21 +51,66 @@ const PersonalDetails = ({ data, onInputChange, errors }) => {
         </div>
       </div>
 
+           {/* Middle Name */}
+           <div className="sm:col-span-2">
+        <label htmlFor="first-name" className="block text-sm/6 font-medium text-gray-900">
+          Midlle name
+        </label>
+        <div className="mt-2">
+          <input
+            type="text"
+            name="middle-name"
+            id="middle-name"
+            autoComplete="middle-name"
+            value={data.middleName}
+            onChange={(e) => onInputChange('middleName', e.target.value)}
+            className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset 
+              ${errors.firstName ? 'ring-red-500' : 'ring-gray-300'} 
+              placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6`}
+          />
+          {errors.middleName && (
+            <span className="mt-2 text-sm text-red-600">{errors.middleName}</span>
+          )}
+        </div>
+      </div>
+
+       {/* ODL */}
+       <div className="sm:col-span-2">
+        <label htmlFor="first-name" className="block text-sm/6 font-medium text-gray-900">
+        Ontario Driver's Licence Number / Numéro du permis de conduire de l'Ontario
+        </label>
+        <div className="mt-2">
+          <input
+            type="text"
+            name="license-number"
+            id="license-number"
+            autoComplete="license-number"
+            value={data.licenseNumber}
+            onChange={(e) => onInputChange('licenseNumber', e.target.value)}
+            className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset 
+              ${errors.licenseNumber ? 'ring-red-500' : 'ring-gray-300'} 
+              placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6`}
+          />
+          {errors.licenseNumber && (
+            <span className="mt-2 text-sm text-red-600">{errors.licenseNumber}</span>
+          )}
+        </div>
+      </div>
+
       {/* Date of Birth */}
       <div className="sm:col-span-2">
         <label htmlFor="dob" className="block text-sm/6 font-medium text-gray-900">
           Date of Birth
         </label>
         <div className="mt-2">
-          <DatePicker
-            selected={data.dateOfBirth}
-            placeholderText='YYYY-MM-DD'
-            onChange={(date) => onInputChange('dateOfBirth', date)}
-            dateFormat="yyyy-MM-dd"
-            className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset 
-    ${errors.dateOfBirth ? 'ring-red-500' : 'ring-gray-300'} 
-    placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6`}
-          />
+        <input
+    type="date"
+    value={data.dateOfBirth || ''}
+    onChange={(e) => onInputChange('dateOfBirth', e.target.value)}
+    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset 
+        ${errors.dateOfBirth ? 'ring-red-500' : 'ring-gray-300'} 
+        placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6`}
+/>
           {errors.dateOfBirth && (
             <span className="mt-2 text-sm text-red-600">{errors.dateOfBirth}</span>
           )}
