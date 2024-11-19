@@ -1,5 +1,5 @@
 
-export const ConfirmationModal = ({ isOpen, onClose, message }) => {
+ const ConfirmationModal = ({ isOpen, onClose, message }) => {
     if (!isOpen) return null;
   
     return (
@@ -19,3 +19,5 @@ export const ConfirmationModal = ({ isOpen, onClose, message }) => {
       </div>
     );
   };
+
+    export default ConfirmationModal;

@@ -1,6 +1,6 @@
-// src/api/driverLicense.js - API endpoints
+
 import api from './axios';
-const API_URL = 'http://localhost:8000'; 
+
 export const driverLicenseApi = {
   // Create new license
   createLicense: async (licenseData) => {

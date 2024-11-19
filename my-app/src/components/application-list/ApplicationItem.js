@@ -1,9 +1,14 @@
 
-import { StatusIndicator } from '../StatusIndicator';
-import { ApplicationDetailsDropdown } from '../ApplicationDetailsDropdown';
-import { EditButton, DeleteButton, ViewButton } from '../buttons';
+import  StatusIndicator  from './StatusIndicator';
+import  ApplicationDetailsDropdown  from './ApplicationDetailsDropdown';
+import EditBtn from '../buttons/EditBtn';
+import DeleteBtn from '../buttons/DeleteBtn';
+import ViewBtn from '../buttons/ViewBtn';
+
+
 
 const ApplicationItem = ({ application }) => {
+
   return (
     <div className="flex items-center justify-between p-4 border-b">
       <div className="flex items-center space-x-4">
@@ -17,11 +22,11 @@ const ApplicationItem = ({ application }) => {
       </div>
       
       <div className="flex items-center space-x-2">
-        <ViewButton applicationId={application.id} />
+        <ViewBtn applicationId={application.id} />
         {application.status === 'in_progress' && (
-          <EditButton applicationId={application.id} />
+          <EditBtn applicationId={application.id} />
         )}
-        <DeleteButton 
+        <DeleteBtn 
           applicationId={application.id} 
           onDelete={() => {/* handle delete */}} 
         />

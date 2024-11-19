@@ -1,14 +1,14 @@
-// components/ApplicationDetailsDropdown/index.jsx
+
 import { Menu } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 const ApplicationDetailsDropdown = ({ application }) => {
-  // Format date function
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  // Group fields for better organization
+
   const personalDetails = [
     { label: 'First Name', value: application.first_name },
     { label: 'Last Name', value: application.last_name },

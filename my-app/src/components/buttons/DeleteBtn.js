@@ -1,9 +1,9 @@
 
 import { useState } from 'react';
-import { ConfirmationModal } from '../ConfirmationModal';
+import  ConfirmationModal  from "../application-list/ConfirmationModal";
 import { useApplicationContext } from '../../context/ApplicationContext';
 
-export const DeleteButton = ({ applicationId }) => {
+const DeleteBtn = ({ applicationId }) => {
   const [showModal, setShowModal] = useState(false);
   const { deleteApplication } = useApplicationContext();
 
@@ -28,3 +28,5 @@ export const DeleteButton = ({ applicationId }) => {
     </>
   );
 };
+
+export default DeleteBtn;
