@@ -9,6 +9,7 @@ export const driverLicenseApi = {
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
+      console.log("The error here is:",error);
     }
   },
 

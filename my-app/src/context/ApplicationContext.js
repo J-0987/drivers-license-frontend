@@ -1,19 +1,29 @@
 // context/ApplicationContext.jsx
-import { createContext, useContext } from 'react';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { createContext, useContext, useState, useCallback } from 'react';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:8000'; 
 
 const ApplicationContext = createContext();
 
 export const ApplicationProvider = ({ children }) => {
-  const [applications, setApplications] = useLocalStorage('driverApplications', []);
+  const [applications, setApplications] = useState([]);
+
+  // Fetch all applications
+  const fetchApplications = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/applications`);
+      setApplications(response.data);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      throw error;
+    }
+  }, []);
 
   // Save or update application
-  const saveApplication = (formData, isSubmitted = false) => {
-    const newApplication = {
-      id: formData.id || crypto.randomUUID(),
-      createdAt: formData.createdAt || new Date().toISOString(),
-      status: isSubmitted ? 'submitted' : 'in_progress',
-      data: {
+  const saveApplication = async (formData, isSubmitted = false) => {
+    try {
+      const applicationData = {
         last_name: formData.last_name,
         first_name: formData.first_name,
         middle_name: formData.middle_name,
@@ -24,28 +34,60 @@ export const ApplicationProvider = ({ children }) => {
         residential_address: formData.residential_address,
         mailing_address: formData.mailing_address,
         province: formData.province,
-        postal_code: formData.postal_code
-      }
-    };
+        postal_code: formData.postal_code,
+        status: isSubmitted ? 'submitted' : 'in_progress'
+      };
 
-    setApplications(prev => {
-      const filtered = prev.filter(app => app.id !== newApplication.id);
-      return [...filtered, newApplication];
-    });
+      let response;
+      if (formData.id) {
+        // Update existing application
+        response = await axios.put(
+          `${API_BASE_URL}/applications/${formData.id}`,
+          applicationData
+        );
+      } else {
+        // Create new application
+        response = await axios.post(
+          `${API_BASE_URL}/applications`,
+          applicationData
+        );
+      }
+
+      // Refresh applications list
+      await fetchApplications();
+      return response.data;
+    } catch (error) {
+      console.error('Error saving application:', error);
+      throw error;
+    }
   };
 
   // Delete application
-  const deleteApplication = (id) => {
-    setApplications(prev => prev.filter(app => app.id !== id));
+  const deleteApplication = async (id) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/applications/${id}`);
+      // Refresh applications list
+      await fetchApplications();
+    } catch (error) {
+      console.error('Error deleting application:', error);
+      throw error;
+    }
   };
 
   // Get single application
-  const getApplication = (id) => {
-    return applications.find(app => app.id === id);
+  const getApplication = async (id) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/applications/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching application:', error);
+      throw error;
+    }
   };
 
   const value = {
     applications,
+    fetchApplications,
     saveApplication,
     deleteApplication,
     getApplication

@@ -10,8 +10,8 @@ function App() {
    <Router>
       <div>
         <Routes>
-          <Route path="/" element={<MainForm />} />
-          <Route path ='/list' element ={<ApplicationList />} />
+          <Route path="/" element={<MainForm />} /> 
+          <Route path ='/applications' element ={<ApplicationList/>} />
           {/* <Route path="/confirmation" element={<ConfirmationPage />} /> */}
         </Routes>
       </div>
