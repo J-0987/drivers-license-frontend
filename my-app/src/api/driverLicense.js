@@ -1,6 +1,6 @@
-// src/api/driverLicense.js - API endpoints
+
 import api from './axios';
-const API_URL = 'http://localhost:8000'; 
+
 export const driverLicenseApi = {
   // Create new license
   createLicense: async (licenseData) => {
@@ -9,6 +9,7 @@ export const driverLicenseApi = {
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
+      console.log("The error here is:",error);
     }
   },
 
