@@ -21,7 +21,6 @@ const ApplicationDetailsDropdown = ({ application }) => {
 
   const addressDetails = [
     { label: 'Residential Address', value: application.residential_address },
-    { label: 'Mailing Address', value: application.mailing_address },
     { label: 'Province', value: application.province },
     { label: 'Postal Code', value: application.postal_code },
   ];

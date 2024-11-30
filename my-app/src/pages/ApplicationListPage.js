@@ -1,52 +1,76 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-//request database to render list of applications
-
-import ApplicationItem from '../components/application-list/ApplicationItem';
-import { useApplicationContext } from '../context/ApplicationContext';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-
-export const ApplicationList = () => {
-  const { applications, fetchApplications, loading, error } = useApplicationContext();
-  const navigate = useNavigate();
+function ApplicationList() {
+  const [applications, setApplications] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchApplications();
-  }, [fetchApplications]);
+      const fetchApplications = async () => {
+          try {
+            const response = await axios.get('http://127.0.0.1:8000/api/driver-license/');
 
-  if (loading) {
-    return <div className="text-center py-4">Loading applications...</div>;
-  }
 
-  if (error) {
-    return <div className="text-red-500 text-center py-4">Error: {error}</div>;
-  }
+              setApplications(response.data);
+              console.log(response.data);
+              setIsLoading(false);
+          } catch (err) {
+              setError(err.message);
+              setIsLoading(false);
+          }
+      };
+
+      fetchApplications();
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
+  applications.forEach(app => {
+    console.log('App:', app);
+    console.log('ID:', app.id);
+    console.log('First Name:', app.first_name);
+    console.log('Height (cm):', app.height_cm);
+});
+
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Your Applications</h1>
-        <button 
-          onClick={() => navigate('/application/new')}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          New Application
-        </button>
+      <div>
+          <h2>Driver License Applications</h2>
+          <table className="min-w-full border-collapse border border-gray-300">
+              <thead className="bg-gray-100">
+                  <tr>
+                      <th className="border p-2">ID</th>
+                      <th className="border p-2">First Name</th>
+                      <th className="border p-2">Last Name</th>
+                      <th className="border p-2">Email</th>
+                      <th className="border p-2">Phone</th>
+                      <th className="border p-2">Address</th>
+                      <th className="border p-2">Date of Birth</th>
+                      <th className="border p-2">License Type</th>
+                      <th className="border p-2">Status</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {applications.map((app) => (
+                      <tr key={app.id}>
+                    
+                          <td className="border p-2">{app.first_name}</td>
+                          <td className="border p-2">{app.middle_name}</td>
+                          <td className="border p-2">{app.last_name}</td>
+                          <td className="border p-2">{app.license_number}</td>
+                          <td className="border p-2">{app.province}</td>
+                          <td className="border p-2">{app.postal_code}</td>
+                          <td className="border p-2">{app.residential_address}</td>
+                          <td className="border p-2">{app.date_of_birth}</td>
+                          <td className="border p-2">{app.sex}</td>
+                          <td className="border p-2">{app.height_cm}</td>
+                      </tr>
+                  ))}
+              </tbody>
+          </table>
       </div>
-      <div className="space-y-4">
-        {applications.length === 0 ? (
-          <p className="text-center text-gray-500">
-            No applications found. Create a new one!
-          </p>
-        ) : (
-          applications.map(application => (
-            <ApplicationItem 
-              key={application.id} 
-              application={application} 
-            />
-          ))
-        )}
-      </div>
-    </div>
   );
-};
+}
+
+export default ApplicationList;
