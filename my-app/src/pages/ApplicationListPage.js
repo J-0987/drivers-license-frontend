@@ -29,7 +29,7 @@ function ApplicationList() {
     console.log('App:', app);
     console.log('ID:', app.id);
     console.log('First Name:', app.first_name);
-    console.log('Height (cm):', app.height_cm);
+    console.log('First Name:', app.last_name);
 });
 
   if (error) return <div>Error: {error}</div>;
@@ -42,29 +42,17 @@ function ApplicationList() {
                   <tr>
                       <th className="border p-2">ID</th>
                       <th className="border p-2">First Name</th>
-                      <th className="border p-2">Last Name</th>
-                      <th className="border p-2">Email</th>
-                      <th className="border p-2">Phone</th>
-                      <th className="border p-2">Address</th>
-                      <th className="border p-2">Date of Birth</th>
-                      <th className="border p-2">License Type</th>
+                      <th className="border p-2">Last Name</th>                  
                       <th className="border p-2">Status</th>
                   </tr>
               </thead>
               <tbody>
                   {applications.map((app) => (
                       <tr key={app.id}>
-                    
+                          <td className="border p-2">{app.id}</td>
                           <td className="border p-2">{app.first_name}</td>
-                          <td className="border p-2">{app.middle_name}</td>
                           <td className="border p-2">{app.last_name}</td>
-                          <td className="border p-2">{app.license_number}</td>
-                          <td className="border p-2">{app.province}</td>
-                          <td className="border p-2">{app.postal_code}</td>
-                          <td className="border p-2">{app.residential_address}</td>
-                          <td className="border p-2">{app.date_of_birth}</td>
-                          <td className="border p-2">{app.sex}</td>
-                          <td className="border p-2">{app.height_cm}</td>
+                          <td className="border p-2">{app.status}</td>
                       </tr>
                   ))}
               </tbody>
