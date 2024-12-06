@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { driverLicenseApi } from '../api/driverLicense';
-import Card from '../components/application-list/Card';
+import Card from '../components/Card/Card';
 
 
 function ApplicationList() {
@@ -9,9 +9,12 @@ function ApplicationList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
- const handleEdit = (id) => {
+
+
+
+const handleEdit = (id) => {
     console.log('Edit:', id);
-    };
+};
 
   useEffect(() => {
       const fetchApplications = async () => {
@@ -79,6 +82,7 @@ function ApplicationList() {
         </Card>
       ))}
     </div>
+ 
       </div>
   );
 }

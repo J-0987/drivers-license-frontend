@@ -1,4 +1,4 @@
-// Card.jsx
+
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import './card.css';
 
@@ -31,6 +31,7 @@ const Card = ({ status, onEdit, onDelete, onView, children }) => {
               </button>
               <button className="icon-button" onClick={onDelete}>
                 <FaTrash />
+               
               </button>
             </>
           ) : (
