@@ -1,5 +1,5 @@
 // Card.jsx
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import './card.css';
 
 const getStatusColor = (status) => {
@@ -13,7 +13,7 @@ const getStatusColor = (status) => {
   }
 };
 
-const Card = ({ status, onEdit, onDelete, children }) => {
+const Card = ({ status, onEdit, onDelete, onView, children }) => {
     const cardStyle = {
       backgroundColor: getStatusColor(status)
     };
@@ -24,12 +24,20 @@ const Card = ({ status, onEdit, onDelete, children }) => {
           {children}
         </div>
         <div className="card-actions">
-          <button className="icon-button" onClick={onEdit}>
-            <FaEdit />
-          </button>
-          <button className="icon-button" onClick={onDelete}>
-            <FaTrash />
-          </button>
+          {status.toLowerCase() === 'draft' ? (
+            <>
+              <button className="icon-button" onClick={onEdit}>
+                <FaEdit />
+              </button>
+              <button className="icon-button" onClick={onDelete}>
+                <FaTrash />
+              </button>
+            </>
+          ) : (
+            <button className="icon-button" onClick={onView}>
+              <FaEye />
+            </button>
+          )}
         </div>
       </div>
     );

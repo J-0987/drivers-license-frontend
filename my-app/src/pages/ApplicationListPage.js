@@ -9,7 +9,9 @@ function ApplicationList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
+ const handleEdit = (id) => {
+    console.log('Edit:', id);
+    };
 
   useEffect(() => {
       const fetchApplications = async () => {
@@ -69,7 +71,7 @@ function ApplicationList() {
         <Card 
           key={app.id}
           status={app.status}
-        //   onEdit={() => handleEdit(app.id)}
+          onEdit={() => handleEdit(app.id)}
         //   onDelete={() => handleDelete(app.id)}
         >
         <h3>{`Full Name: ${app.last_name}, ${app.first_name}`}</h3>
