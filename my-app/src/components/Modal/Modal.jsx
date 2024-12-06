@@ -8,6 +8,7 @@ const Modal = ({ isOpen, children }) => {
     <div className="modal-overlay">
       <div className="modal">
         <div className="modal__content">
+        <i className="modal-close-icon fas fa-times" onClick={onClose}></i>
           {children}
         </div>
       </div>
