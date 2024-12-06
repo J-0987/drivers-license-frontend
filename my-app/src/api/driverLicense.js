@@ -51,6 +51,7 @@ getAllApplications: async () => {
 
 getApplication: async (id) => {
   try {
+    console.log("Fetching URL:", `/applications/${id}`); // Debugging
     const response = await api.get(`/applications/${id}`);
     return response.data;
   } catch (error) {
