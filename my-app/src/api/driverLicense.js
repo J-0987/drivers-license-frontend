@@ -41,8 +41,9 @@ deleteApplication: async (id) => {
 
 getAllApplications: async () => {
   try {
-    const response = await api.get('/applications/');
-    return response.data;
+    const response = await api.get('/applications');
+    console.log("Response from API:", response);
+    return response;
   } catch (error) {
     throw error.response?.data || error.message;
   }
