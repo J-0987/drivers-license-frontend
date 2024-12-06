@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { driverLicenseApi } from '../api/driverLicense';
+import Card from '../components/application-list/Card';
+
 
 function ApplicationList() {
   const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
+
   useEffect(() => {
       const fetchApplications = async () => {
           try {
-            const response = await axios.get('http://127.0.0.1:8000/api/applications');
+            // const response = await axios.get('http://127.0.0.1:8000/api/applications');
+            const response = await driverLicenseApi.getAllApplications();
 
 
               setApplications(response.data);
@@ -57,6 +63,20 @@ function ApplicationList() {
                   ))}
               </tbody>
           </table>
+
+          <div className="applications-list">
+      {applications.map(app => (
+        <Card 
+          key={app.id}
+          status={app.status}
+        //   onEdit={() => handleEdit(app.id)}
+        //   onDelete={() => handleDelete(app.id)}
+        >
+        <h3>{`Full Name: ${app.last_name}, ${app.first_name}`}</h3>
+          <p>{`Status: ${app.status}`}</p>
+        </Card>
+      ))}
+    </div>
       </div>
   );
 }
