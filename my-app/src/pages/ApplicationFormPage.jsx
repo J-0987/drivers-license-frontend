@@ -7,7 +7,7 @@ import AddressDetails from '../components/form-sections/AddressDetails';
 import SaveBtn from '../components/form-controls/SaveBtn';
 import SubmitBtn from '../components/form-controls/SubmitBtn';
 import ResetBtn from '../components/form-controls/ResetBtn';
-import { v4 as uuidv4 } from 'uuid';
+
 
 const MainForm = () => {
   const initialFormState = {
@@ -94,7 +94,6 @@ const MainForm = () => {
     return Object.keys(newErrors).length === 0;
   };
   
-  
   const handleSave = async () => {
     try {
       // Minimal validation for draft save
@@ -102,9 +101,7 @@ const MainForm = () => {
         toast.error('Please fill in your first and last name to save draft.');
         return;
       }
-  
 
-  
       // Set draft status explicitly
       const draftData = {
        
@@ -142,8 +139,6 @@ const MainForm = () => {
     }
   };
   
- 
-
   const handleReset = () => {
     setFormData(initialFormState);
     setErrors({});

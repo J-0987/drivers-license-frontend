@@ -1,0 +1,22 @@
+@use "./variables" as *;
+
+
+// Mixin for tablet breakpoint
+@mixin tablet {
+    @media (min-width: #{$tablet-breakpoint}) {
+      @content;
+    }
+  }
+  
+// Mixin for desktop breakpoint
+  @mixin desktop {
+    @media (min-width: #{$desktop-breakpoint}) {
+      @content;
+    }
+  }
+
+
+  @mixin rotate-color($index) {
+    color: nth($colors, $index % length($colors) + 1); 
+    background-color: nth($colors, $index % length($colors) + 1); 
+  }

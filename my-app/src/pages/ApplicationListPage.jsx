@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { driverLicenseApi } from '../api/driverLicense';
 import Card from '../components/Card/Card';
+import Modal from '../components/Modal/Modal';
+import AddresDetails from '../components/form-sections/AddressDetails';
+import PersonalDetails from '../components/form-sections/PersonalDetails';
+import MainForm from'../pages/ApplicationFormPage'; 
 
 
 function ApplicationList() {
@@ -9,7 +13,17 @@ function ApplicationList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // const handleEditClick = (application) => {
+  //   setSelectedApplication(application);
+  //   setModalOpen(true);
+  // };
 
+  // const handleEditSuccess = async () => {
+  //   // Refresh the applications list
+  //   const updatedApplications = await fetchApplications();
+  //   setApplications(updatedApplications);
+  //   setModalOpen(false);
+  // };
 
 
 const handleEdit = (id) => {
@@ -46,44 +60,28 @@ const handleEdit = (id) => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-      <div>
-          <h2>Driver License Applications</h2>
-          <table className="min-w-full border-collapse border border-gray-300">
-              <thead className="bg-gray-100">
-                  <tr>
-                      <th className="border p-2">ID</th>
-                      <th className="border p-2">First Name</th>
-                      <th className="border p-2">Last Name</th>                  
-                      <th className="border p-2">Status</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  {applications.map((app) => (
-                      <tr key={app.id}>
-                          <td className="border p-2">{app.id}</td>
-                          <td className="border p-2">{app.first_name}</td>
-                          <td className="border p-2">{app.last_name}</td>
-                          <td className="border p-2">{app.status}</td>
-                      </tr>
-                  ))}
-              </tbody>
-          </table>
-
           <div className="applications-list">
       {applications.map(app => (
         <Card 
           key={app.id}
           status={app.status}
-          onEdit={() => handleEdit(app.id)}
+          onEdit={() => handleEdit(app)}
         //   onDelete={() => handleDelete(app.id)}
         >
         <h3>{`Full Name: ${app.last_name}, ${app.first_name}`}</h3>
           <p>{`Status: ${app.status}`}</p>
         </Card>
       ))}
+      {/* {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+          <MainForm 
+            initialData={selectedApplication}
+            isEdit={true}
+            onSubmitSuccess={handleEditSuccess}
+          />
+        </Modal>
+      )} */}
     </div>
- 
-      </div>
   );
 }
 
