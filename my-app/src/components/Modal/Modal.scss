@@ -14,11 +14,15 @@
     color: $dark-brown;
     z-index: 4;
   }
+
+  
   .modal__content {
     width: 100%;      // Add this
     height: 100%;     // Add this
     overflow-y: auto; // Add this
   }
+
+
   .modal {
     background-color: $off-white;
     padding: 20px;
@@ -49,4 +53,30 @@
   
   .cancel-button {
     background-color: $off-white;
+  }
+
+
+  .modal {
+    position: relative;  // Add this for absolute positioning of close button
+    
+    &__close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $dark-brown;
+      z-index: 5;
+      
+      &:hover {
+        opacity: 0.7;
+      }
+    }
   }

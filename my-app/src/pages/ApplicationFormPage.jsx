@@ -7,7 +7,7 @@ import SaveBtn from '../components/form-controls/SaveBtn';
 import SubmitBtn from '../components/form-controls/SubmitBtn';
 import ResetBtn from '../components/form-controls/ResetBtn';
 
-const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess }) => {
+const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess, onFormChange }) => {
   const initialFormState = {
     lastName: '',
     firstName: '',
@@ -55,6 +55,7 @@ const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess }) => {
       ...prevData,
       [field]: value,
     }));
+    onFormChange?.();
   };
 
   const validateForm = (isDraft = false) => {
@@ -159,6 +160,7 @@ const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess }) => {
         city: formData.city.trim(),
         province: formData.province.trim(),
         postal_code: formData.postalCode.trim(),
+        status: 'submitted',
       };
 
       const response = isEdit
