@@ -162,7 +162,7 @@ const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess }) => {
       };
 
       const response = isEdit
-        ? await driverLicenseApi.updateApplication(initialData.id, formattedData)
+        ? await driverLicenseApi.editApplication(initialData.id, formattedData)
         : await driverLicenseApi.submitApplication(formattedData);
 
       toast.success(`Application ${isEdit ? 'updated' : 'submitted'} successfully!`);
