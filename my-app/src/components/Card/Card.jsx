@@ -18,6 +18,7 @@ const getStatusColor = (status) => {
 
 const Card = ({ application, onEdit, onDelete, onView, children }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const { status } = application;
 
@@ -27,6 +28,9 @@ const Card = ({ application, onEdit, onDelete, onView, children }) => {
 
   const handleDeleteClick = () => {
     setIsDeleteModalOpen(true);
+  };
+  const handleViewClick = () => {
+    setIsViewModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -61,9 +65,19 @@ const Card = ({ application, onEdit, onDelete, onView, children }) => {
             </button>
           </>
         ) : (
-          <button className="icon-button" onClick={onView}>
-            <FaEye />
-          </button>
+          <>
+      <button className="icon-button" onClick={handleViewClick}>
+        <FaEye />
+      </button>
+      <button
+        className="icon-button"
+        onClick={handleDeleteClick}
+      >
+        <FaTrash />
+      </button>
+    </>
+          
+          
         )}
       </div>
 
@@ -86,6 +100,22 @@ const Card = ({ application, onEdit, onDelete, onView, children }) => {
               className="cancel-button"
             >
               Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* View Modal */}
+      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)}>
+        <div className="modal-content">
+          <MainForm 
+            initialData={application} 
+            isDisabled={true} 
+            isViewMode={true}
+          />
+          <div className="modal-buttons">
+            <button onClick={() => setIsViewModalOpen(false)} className="close-button">
+              Close
             </button>
           </div>
         </div>
