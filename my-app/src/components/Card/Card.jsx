@@ -65,9 +65,19 @@ const Card = ({ application, onEdit, onDelete, onView, children }) => {
             </button>
           </>
         ) : (
-          <button className="icon-button" onClick={handleViewClick}>
-            <FaEye />
-          </button>
+          <>
+      <button className="icon-button" onClick={handleViewClick}>
+        <FaEye />
+      </button>
+      <button
+        className="icon-button"
+        onClick={handleDeleteClick}
+      >
+        <FaTrash />
+      </button>
+    </>
+          
+          
         )}
       </div>
 

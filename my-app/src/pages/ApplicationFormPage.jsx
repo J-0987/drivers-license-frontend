@@ -15,6 +15,7 @@ const MainForm = ({ initialData = null,
   onFormChange,
   isDisabled = false,
   isViewMode = false  }) => {
+
   const initialFormState = {
     lastName: '',
     firstName: '',
@@ -185,16 +186,16 @@ const handleSubmit = async (e) => {
       postalCode: 'postal_code'
     };
 
-    const submissionData = {
+ const submissionData = {
       ...Object.entries(fieldMapping).reduce((acc, [clientKey, serverKey]) => ({
-          ...acc,
-          [serverKey]: formData[clientKey] || null
+        ...acc,
+        [serverKey]: formData[clientKey] || null
       }), {}),
       status: 'submitted'
-  };
+    };
 
     const response = isEdit
-      ? await driverLicenseApi.submitApplication(initialData.id, submissionData)
+      ? await driverLicenseApi.createApplication(initialData.id, submissionData)
       : await driverLicenseApi.submitApplication(submissionData);
 
     setErrors({});
@@ -232,8 +233,12 @@ const validateFullForm = () => {
       if (!formData[field] || isNaN(formData[field]) || formData[field] <= 0) {
         newErrors[field] = `${label} must be a valid number`;
       }
-    } else if (!formData[field]?.trim()) {
-      newErrors[field] = `${label} is required`;
+    } else {
+      // Check if value exists and is a string before trimming
+      const value = formData[field];
+      if (!value || (typeof value === 'string' && !value.trim())) {
+        newErrors[field] = `${label} is required`;
+      }
     }
   });
 

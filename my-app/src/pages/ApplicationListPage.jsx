@@ -57,6 +57,7 @@ const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   };
 
   const handleSubmit = async (formData, isEdit) => {
+
     // Validate form before submission
     if (!validateForm(formData)) {
       toast.error("Please fix the form errors before submitting");
@@ -83,16 +84,30 @@ const [showConfirmDialog, setShowConfirmDialog] = useState(false);
         status: "submitted",
       };
 
+
+      const submissionData = {
+        ...Object.entries(formattedData).reduce((acc, [clientKey, serverKey]) => ({
+          ...acc,
+          [serverKey]: formData[clientKey] || null
+        }), {}),
+        status: 'submitted'
+      };
+  
+
+  
       const response = isEdit
-        ? await driverLicenseApi.editApplication(selectedApplication.id, formattedData)
-        : await driverLicenseApi.submitApplication(formattedData);
-        console.log("Payload being sent:", formattedData);
+      ? await driverLicenseApi.editApplication(selectedApplication.id, submissionData) 
+      : await driverLicenseApi.submitApplication(submissionData);
+
+
 
       toast.success(`Application ${isEdit ? "updated" : "submitted"} successfully!`);
       await fetchApplications();
+      setShowSuccess(true); 
       setIsModalOpen(false);
     } catch (error) {
       console.error("Submission error:", error);
+  
       toast.error("Submission failed. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -125,6 +140,7 @@ const [showConfirmDialog, setShowConfirmDialog] = useState(false);
       province: formData.province.trim() || null,
       postal_code: formData.postalCode.trim() || null,
     };
+    return Object.keys(errors).length === 0; 
     
    
   };
@@ -182,12 +198,14 @@ const handleSave = async () => {
      if (error) return <div>Error: {error}</div>;
 
      return (
+      <div className="application-container"> 
+      <div style={{ width: '100%'}}>
+      <h1 style={{ textAlign: 'center', fontSize: 50, fontWeight: 500, color: 'black' }}>
+        Applications List
+      </h1>
+    </div>
     <div className="applications-list">
-      {/* <div style={{ width: '100%', backgroundColor: 'white' }}>
-        <h1 style={{ textAlign: 'center', fontWeight: 600, color: 'black' }}>
-          Applications List
-        </h1>
-      </div> */}
+
       
       {applications.map((app) => (
         <Card
@@ -231,6 +249,7 @@ const handleSave = async () => {
       onSave={handleSave}
       onDiscard={handleDiscardChanges}
     /> */}
+    </div>
     </div>
   );
 }
