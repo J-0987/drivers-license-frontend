@@ -6,6 +6,7 @@ import AddressDetails from '../components/form-sections/AddressDetails';
 import SaveBtn from '../components/form-controls/SaveBtn';
 import SubmitBtn from '../components/form-controls/SubmitBtn';
 import ResetBtn from '../components/form-controls/ResetBtn';
+import Success from '../components/Success/Success';
 
 const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess, onFormChange }) => {
   const initialFormState = {
@@ -24,10 +25,13 @@ const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess, onFormC
     province: '',
     postalCode: '',
   };
+  const [draftId, setDraftId] = useState(null);
 
   const [formData, setFormData] = useState(initialData || initialFormState);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
     if (initialData) {
@@ -47,9 +51,21 @@ const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess, onFormC
         province: initialData.province || '',
         postalCode: initialData.postal_code || ''
       });
+      if (initialData.id) {
+        setDraftId(initialData.id);
     }
+  }
   }, [initialData]);
-
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+        const firstErrorField = Object.keys(errors)[0];
+        const firstErrorElement = document.querySelector(`[name="${firstErrorField}"]`);
+        if (firstErrorElement) {
+            firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstErrorElement.focus();
+        }
+    }
+}, [errors]);
   const onInputChange = (field, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -58,125 +74,183 @@ const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess, onFormC
     onFormChange?.();
   };
 
-  const validateForm = (isDraft = false) => {
+  const validateBasicFields = () => {
     const newErrors = {};
-
-    if (isDraft) {
-      if (!formData.lastName.trim()) {
-        newErrors.lastName = 'Last name is required';
+    const requiredFields = {
+      firstName: 'First name',
+      lastName: 'Last name'
+    };
+  
+    Object.entries(requiredFields).forEach(([field, label]) => {
+      if (!formData[field]?.trim()) {
+        newErrors[field] = `${label} is required`;
       }
-      if (!formData.firstName.trim()) {
-        newErrors.firstName = 'First name is required';
-      }
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    }
-
-    // Full validation for submission
-    if (!isDraft) {
-      // Personal Details
-      if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-      if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-      if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-      if (!formData.sex) newErrors.sex = 'Sex is required';
-      if (!formData.height) newErrors.height = 'Height is required';
-
-      // Address Details
-      if (!formData.streetNumber) newErrors.streetNumber = 'Street number is required';
-      if (!formData.streetName.trim()) newErrors.streetName = 'Street name is required';
-      if (!formData.city.trim()) newErrors.city = 'City is required';
-      if (!formData.province) newErrors.province = 'Province is required';
-      if (!formData.postalCode.trim()) newErrors.postalCode = 'Postal code is required';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    });
+  
+    return newErrors;
   };
 
-  const handleSave = async () => {
-    try {
-      if (!validateForm(true)) {
-        toast.error('Please fill in your first and last name to save draft.');
+const handleSave = async (e) => {
+  e?.preventDefault();
+  try {
+    const validationErrors = validateBasicFields();
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      const missingFields = Object.values(validationErrors).join(' and ');
+      console.log('Basic V Missing fields:', missingFields);
+      toast.error(missingFields);
+      return;
+    }
+
+    const fieldMapping = {
+      lastName: 'last_name',
+      firstName: 'first_name',
+      middleName: 'middle_name',
+      licenseNumber: 'license_number',
+      dateOfBirth: 'date_of_birth',
+      sex: 'sex',
+      height: 'height_cm',
+      streetNumber: 'street_number',
+      unitNumber: 'unit_number',
+      streetName: 'street_name',
+      poBox: 'po_box',
+      city: 'city',
+      province: 'province',
+      postalCode: 'postal_code'
+    };
+
+    const draftData = Object.entries(fieldMapping).reduce((acc, [clientKey, serverKey]) => ({
+      ...acc,
+      [serverKey]: formData[clientKey] || null
+    }), { status: 'draft' });
+
+    let response;
+      
+      // If we have a draftId, update the existing draft
+      if (draftId) {
+        response = await driverLicenseApi.editApplication(draftId, draftData);
+      } else {
+        // If no draftId exists, create a new draft and store its ID
+        response = await driverLicenseApi.createApplication(draftData);
+        setDraftId(response.id); // Assuming the API returns the created draft's ID
+      }
+    setErrors({});
+    setModalMessage(`Draft ${draftId ? 'updated' : 'saved'} successfully!`);
+    setIsModalOpen(true);
+    toast.success(`Draft ${isEdit ? 'updated' : 'saved'} successfully!`);
+    onSubmitSuccess?.();
+  } catch (error) {
+    console.error('Save draft error:', error);
+    toast.error(error.response?.data?.detail || 'Failed to save the draft. Please try again.');
+  }
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const validationErrors = validateFullForm();
+    
+    if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        // Focus on first error field
+        const firstErrorField = Object.keys(validationErrors)[0];
+        const firstErrorElement = document.querySelector(`[name="${firstErrorField}"]`);
+        firstErrorElement?.focus();
         return;
-      }
-
-      const draftData = {
-        last_name: formData.lastName,
-        first_name: formData.firstName,
-        middle_name: formData.middleName || null,
-        license_number: formData.licenseNumber || null,
-        date_of_birth: formData.dateOfBirth || null,
-        sex: formData.sex || null,
-        height_cm: formData.height || null,
-        street_number: formData.streetNumber || null,
-        unit_number: formData.unitNumber || null,
-        street_name: formData.streetName || null,
-        po_box: formData.poBox || null,
-        city: formData.city || null,
-        province: formData.province || null,
-        postal_code: formData.postalCode || null,
-        status: 'draft',
-      };
-
-      const response = isEdit
-        ? await driverLicenseApi.editApplication(initialData.id, draftData)
-        : await driverLicenseApi.createApplication(draftData);
-
-      toast.success(`Draft ${isEdit ? 'updated' : 'saved'} successfully!`);
-      onSubmitSuccess?.();
-    } catch (error) {
-      console.error('Save draft error:', error);
-      toast.error(error.response?.data?.detail || 'Failed to save the draft. Please try again.');
     }
+
+  setIsSubmitting(true);
+  try {
+    const fieldMapping = {
+      lastName: 'last_name',
+      firstName: 'first_name',
+      middleName: 'middle_name',
+      licenseNumber: 'license_number',
+      dateOfBirth: 'date_of_birth',
+      sex: 'sex',
+      height: 'height_cm',
+      unitNumber: 'unit_number',
+      streetNumber: 'street_number',
+      streetName: 'street_name',
+      poBox: 'po_box',
+      city: 'city',
+      province: 'province',
+      postalCode: 'postal_code'
+    };
+
+    const submissionData = {
+      ...Object.entries(fieldMapping).reduce((acc, [clientKey, serverKey]) => ({
+          ...acc,
+          [serverKey]: formData[clientKey] || null
+      }), {}),
+      status: 'submitted'
   };
+
+    const response = isEdit
+      ? await driverLicenseApi.submitApplication(initialData.id, submissionData)
+      : await driverLicenseApi.submitApplication(submissionData);
+
+    setErrors({});
+    setModalMessage(`Application ${draftId ? 'updated' : 'submitted'} successfully!`);
+    setIsModalOpen(true);
+    toast.success(`Application ${isEdit ? 'updated' : 'submitted'} successfully!`);
+    onSubmitSuccess?.();
+  } catch (error) {
+    console.error('Submission error:', error);
+    toast.error(error.response?.data?.detail || 'Submission failed. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+const validateFullForm = () => {
+  const newErrors = {
+    ...validateBasicFields(),
+  };
+  
+  const additionalFields = {
+    dateOfBirth: 'Date of Birth',
+    sex: 'Sex',
+    height: 'Height',
+    licenseNumber: 'License Number',
+    unitNumber: 'Unit Number',
+    streetName: 'Street Name',
+    city: 'City',
+    province: 'Province',
+    postalCode: 'Postal Code'
+  };
+
+  Object.entries(additionalFields).forEach(([field, label]) => {
+    if (field === 'height') {
+      if (!formData[field] || isNaN(formData[field]) || formData[field] <= 0) {
+        newErrors[field] = `${label} must be a valid number`;
+      }
+    } else if (!formData[field]?.trim()) {
+      newErrors[field] = `${label} is required`;
+    }
+  });
+
+  return newErrors;
+};
 
   const handleReset = () => {
     setFormData(initialFormState);
     setErrors({});
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      toast.error('Please fix the form errors before submitting');
-      return;
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    if (modalMessage.includes('submitted')) {
+        onSubmitSuccess?.();
+        setFormData(initialFormState);
+        setErrors({});
+        setDraftId(null);
+    } else if (modalMessage.includes('saved')) {
+        // Keep the form data if it was just saved
+        onSubmitSuccess?.();
     }
+};
 
-    setIsSubmitting(true);
-    try {
-      const formattedData = {
-        last_name: formData.lastName.trim(),
-        first_name: formData.firstName.trim(),
-        middle_name: formData.middleName?.trim() || null,
-        license_number: formData.licenseNumber?.trim() || null,
-        date_of_birth: formData.dateOfBirth || null,
-        sex: formData.sex.trim(),
-        height_cm: Number(formData.height),
-        street_number: formData.streetNumber.trim(),
-        unit_number: formData.unitNumber.trim(),
-        street_name: formData.streetName.trim(),
-        po_box: formData.poBox.trim() || null,
-        city: formData.city.trim(),
-        province: formData.province.trim(),
-        postal_code: formData.postalCode.trim(),
-        status: 'submitted',
-      };
-
-      const response = isEdit
-        ? await driverLicenseApi.editApplication(initialData.id, formattedData)
-        : await driverLicenseApi.submitApplication(formattedData);
-
-      toast.success(`Application ${isEdit ? 'updated' : 'submitted'} successfully!`);
-      onSubmitSuccess?.();
-      if (!isEdit) handleReset();
-    } catch (error) {
-      console.error('Submission error:', error);
-      toast.error('Submission failed. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6">
@@ -199,13 +273,29 @@ const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess, onFormC
       {errors.submit && <div className="text-red-600 mb-4">{errors.submit}</div>}
 
       <div className="flex space-x-4 mt-6">
-        <SaveBtn onClick={handleSave} disabled={isSubmitting} />
+        <SaveBtn type="save" onClick={handleSave} disabled={isSubmitting} />
         <SubmitBtn type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Submitting...' : isEdit ? 'Update' : 'Submit'}
         </SubmitBtn>
-        <ResetBtn onClick={handleReset} disabled={isSubmitting} />
+        <ResetBtn type="button" onClick={handleReset} disabled={isSubmitting} />
       </div>
+      <Success 
+      isOpen={isModalOpen} 
+      onClose={handleModalClose}
+      message={modalMessage}
+    >
+      <div className="modal__actions">
+        <button
+          className="modal__button"
+          onClick={handleModalClose}
+        >
+          Close
+        </button>
+      </div>
+    </Success>
     </form>
+
+
   );
 };
 

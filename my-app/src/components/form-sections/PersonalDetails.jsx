@@ -65,7 +65,7 @@ const PersonalDetails = ({ data, onInputChange, errors }) => {
             value={data.middleName}
             onChange={(e) => onInputChange('middleName', e.target.value)}
             className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset 
-              ${errors.firstName ? 'ring-red-500' : 'ring-gray-300'} 
+              ${errors.middleNameName ? 'ring-red-500' : 'ring-gray-300'} 
               placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6`}
           />
           {errors.middleName && (
@@ -76,7 +76,7 @@ const PersonalDetails = ({ data, onInputChange, errors }) => {
 
        {/* ODL */}
        <div className="sm:col-span-2">
-        <label htmlFor="first-name" className="block text-sm/6 font-medium text-gray-900">
+        <label htmlFor="license-number" className="block text-sm/6 font-medium text-gray-900">
         Ontario Driver's Licence Number / Numéro du permis de conduire de l'Ontario
         </label>
         <div className="mt-2">

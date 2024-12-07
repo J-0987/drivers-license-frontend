@@ -11,8 +11,10 @@ const provinces = [
     "Prince Edward Island",
     "Quebec",
     "Saskatchewan",
+    "Northwest Territories",
+    "Nunavut",
+    "Yukon"
 ];
-
 const AddressDetails = ({ data, onInputChange, errors }) => {
 
 
