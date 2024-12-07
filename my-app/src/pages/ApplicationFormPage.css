@@ -76,4 +76,29 @@ form {
       background-color: #357abd;
     }
   }
+  .view-mode-section {
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .field-display {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .field-display:last-child {
+    border-bottom: none;
+  }
+  
+  .field-display span:first-child {
+    color: #374151;
+  }
+  
+  .field-display span:last-child {
+    color: #111827;
+  }
 }
