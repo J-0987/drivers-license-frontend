@@ -1,0 +1,199 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+// Existing modal styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $dark-brown;
+  z-index: 4;
+}
+
+.modal__content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.modal {
+  background-color: $off-white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  width: 100%;
+  position: relative;
+
+  &__close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $dark-brown;
+    z-index: 5;
+    
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+.modal-buttons {
+  margin-top: 20px;
+}
+
+.close-button, .cancel-button {
+  margin: 0 10px;
+  padding: .5rem 1rem;
+  cursor: pointer;
+  border-radius: 1rem;
+}
+
+.confirm-button {
+  background-color: $brown;
+  color: $off-white;
+  border: none;
+}
+
+.cancel-button {
+  background-color: $off-white;
+}
+
+// New navbar styles
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1a1a1a;
+  padding: 1rem 2rem;
+  position: relative;
+
+  &__logo {
+    h1 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 32px;
+      line-height: 1.29;
+      font-weight: 700;
+      letter-spacing: 0.04rem;
+      color: #FFFFFF;
+
+      @media (min-width: 768px) {
+        font-size: 40px;
+        line-height: 1.2;
+      }
+    }
+  }
+
+  &__menu {
+    display: flex;
+    align-items: center;
+
+    .francais {
+      color: #FFFFFF;
+      margin-right: 1rem;
+      text-decoration: none;
+      font-family: 'Raleway', sans-serif;
+      font-size: 16px;
+    }
+
+    .menu-button {
+      font-family: 'Raleway', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      background: none;
+      border: 2px solid #FFFFFF;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &.active {
+        background-color: #FFFFFF;
+        color: #1A1A1A;
+      }
+    }
+  }
+
+  .menu-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #FFFFFF;
+    min-width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: 0.5rem;
+
+    .navbar__links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        border-bottom: 1px solid #E5E5E5;
+
+        a {
+          display: block;
+          padding: 1rem 1.5rem;
+          color: #1A1A1A;
+          text-decoration: none;
+          font-family: 'Raleway', sans-serif;
+          font-size: 20px;
+          line-height: 1.5;
+          font-weight: 700;
+          letter-spacing: 0.03rem;
+          transition: all 0.2s ease;
+
+          @media (min-width: 768px) {
+            font-size: 24px;
+            letter-spacing: 0.0313rem;
+          }
+
+          &:hover {
+            background-color: #F5F5F5;
+            color: #0066CC;
+            text-decoration: underline;
+          }
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}
+
+// ServiceOntario banner
+.service-ontario-banner {
+  background-color: #006C40;
+  padding: 0.5rem 2rem;
+
+  h2 {
+    color: #FFFFFF;
+    font-family: 'Raleway', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+  }
+}
