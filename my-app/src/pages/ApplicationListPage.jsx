@@ -19,6 +19,7 @@ function ApplicationListPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+const [isViewMode, setIsViewMode] = useState(false);
 
   const fetchApplications = async () => {
     try {
@@ -57,62 +58,46 @@ const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   };
 
   const handleSubmit = async (formData, isEdit) => {
-
-    // Validate form before submission
     if (!validateForm(formData)) {
-      toast.error("Please fix the form errors before submitting");
-      return;
+        toast.error("Please fix the form errors before submitting");
+        return;
     }
-
+    
     setIsSubmitting(true);
     try {
-      const formattedData = {
-        last_name: formData.lastName.trim(),
-        first_name: formData.firstName.trim(),
-        middle_name: formData.middleName?.trim() || null,
-        license_number: formData.licenseNumber.trim(),
-        date_of_birth: formData.dateOfBirth,
-        sex: formData.sex.trim(),
-        height_cm: Number(formData.height),
-        street_number: formData.streetNumber.trim(),
-        unit_number: formData.unitNumber?.trim(),
-        street_name: formData.streetName.trim(),
-        po_box: formData.poBox?.trim() || null,
-        city: formData.city.trim(),
-        province: formData.province.trim(),
-        postal_code: formData.postalCode.trim(),
-        status: "submitted",
-      };
+        const submissionData = {
+            last_name: formData.lastName?.trim() || null,
+            first_name: formData.firstName?.trim() || null,
+            middle_name: formData.middleName?.trim() || null,
+            license_number: formData.licenseNumber?.trim() || null,
+            date_of_birth: formData.dateOfBirth || null,
+            sex: formData.sex?.trim() || null,
+            height_cm: formData.height ? Number(formData.height) : null,
+            street_number: formData.streetNumber?.trim() || null,
+            unit_number: formData.unitNumber?.trim() || null,
+            street_name: formData.streetName?.trim() || null,
+            po_box: formData.poBox?.trim() || null,
+            city: formData.city?.trim() || null,
+            province: formData.province?.trim() || null,
+            postal_code: formData.postalCode?.trim() || null,
+            status: 'submitted'
+        };
 
-
-      const submissionData = {
-        ...Object.entries(formattedData).reduce((acc, [clientKey, serverKey]) => ({
-          ...acc,
-          [serverKey]: formData[clientKey] || null
-        }), {}),
-        status: 'submitted'
-      };
-  
-
-  
-      const response = isEdit
-      ? await driverLicenseApi.editApplication(selectedApplication.id, submissionData) 
-      : await driverLicenseApi.submitApplication(submissionData);
-
-
-
-      toast.success(`Application ${isEdit ? "updated" : "submitted"} successfully!`);
-      await fetchApplications();
-      setShowSuccess(true); 
-      setIsModalOpen(false);
+        const response = isEdit 
+            ? await driverLicenseApi.editApplication(selectedApplication.id, submissionData)
+            : await driverLicenseApi.submitApplication(submissionData);
+            
+        toast.success(`Application ${isEdit ? "updated" : "submitted"} successfully!`);
+        await fetchApplications();
+        setShowSuccess(true);
+        setIsModalOpen(false);
     } catch (error) {
-      console.error("Submission error:", error);
-  
-      toast.error("Submission failed. Please try again.");
+        console.error("Submission error:", error);
+        toast.error("Submission failed. Please try again.");
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
 
   const handleModalClose = () => {
     // if (hasUnsavedChanges) {
@@ -194,6 +179,11 @@ const handleSave = async () => {
     setHasUnsavedChanges(false);
   };
 
+  const handleView = (application) => {
+    setSelectedApplication(application);
+    setIsViewMode(true);
+    setIsModalOpen(true);
+  };
      if (isLoading) return <div>Loading...</div>;
      if (error) return <div>Error: {error}</div>;
 
@@ -213,6 +203,7 @@ const handleSave = async () => {
           application={app}
           onEdit={() => handleEdit(app)}
           onDelete={() => handleDelete(app.id)}
+          onView={() => handleView(app)}
           status={app.status}
         >
           <h3>{`Full Name: ${app.last_name}, ${app.first_name}`}</h3>
@@ -220,30 +211,33 @@ const handleSave = async () => {
         </Card>
       ))}
 
-      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-        {!showSuccess ? (
-          <MainForm
-            initialData={selectedApplication}
-            isEdit={true}
-            onSubmit={(formData) => handleSubmit(formData, true)}
-            isSubmitting={true}
-            onSave={handleSave}
-            onSubmitSuccess={() => fetchApplications()}
-            onFormChange={(formData) => {
-              setHasUnsavedChanges(true);
-              setCurrentFormData(formData);
-            }}
-          />
-        ) : (
-          <Success 
-            message="Application saved successfully!"
-            onClose={() => {
-              setShowSuccess(false);
-              setIsModalOpen(false);
-            }}
-          />
-        )}
-      </Modal>
+<Modal isOpen={isModalOpen} onClose={handleModalClose}>
+  {!showSuccess ? (
+    <MainForm 
+      initialData={selectedApplication}
+      isEdit={!isViewMode}
+      isViewMode={isViewMode}
+      onSubmit={(formData) => handleSubmit(formData, true)}
+      isSubmitting={isSubmitting}
+      onSave={handleSave}
+      onSubmitSuccess={() => fetchApplications()}
+      onFormChange={(formData) => {
+        setHasUnsavedChanges(true);
+        setCurrentFormData(formData);
+      }}
+      isDisabled={isViewMode}
+    />
+  ) : (
+    <Success 
+      message="Application saved successfully!" 
+      onClose={() => {
+        setShowSuccess(false);
+        setIsModalOpen(false);
+        setIsViewMode(false);
+      }} 
+    />
+  )}
+</Modal>
       {/* <ConfirmDialog
       isOpen={showConfirmDialog}
       onSave={handleSave}

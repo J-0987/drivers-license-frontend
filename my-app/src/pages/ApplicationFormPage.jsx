@@ -155,59 +155,49 @@ const handleSave = async (e) => {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-
   const validationErrors = validateFullForm();
-    
-    if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        // Focus on first error field
-        const firstErrorField = Object.keys(validationErrors)[0];
-        const firstErrorElement = document.querySelector(`[name="${firstErrorField}"]`);
-        firstErrorElement?.focus();
-        return;
-    }
+  if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      const firstErrorField = Object.keys(validationErrors)[0];
+      const firstErrorElement = document.querySelector(`[name="${firstErrorField}"]`);
+      firstErrorElement?.focus();
+      return;
+  }
 
   setIsSubmitting(true);
   try {
-    const fieldMapping = {
-      lastName: 'last_name',
-      firstName: 'first_name',
-      middleName: 'middle_name',
-      licenseNumber: 'license_number',
-      dateOfBirth: 'date_of_birth',
-      sex: 'sex',
-      height: 'height_cm',
-      unitNumber: 'unit_number',
-      streetNumber: 'street_number',
-      streetName: 'street_name',
-      poBox: 'po_box',
-      city: 'city',
-      province: 'province',
-      postalCode: 'postal_code'
-    };
+      const submissionData = {
+          last_name: formData.lastName?.trim() || null,
+          first_name: formData.firstName?.trim() || null,
+          middle_name: formData.middleName?.trim() || null,
+          license_number: formData.licenseNumber?.trim() || null,
+          date_of_birth: formData.dateOfBirth || null,
+          sex: formData.sex?.trim() || null,
+          height_cm: formData.height ? Number(formData.height) : null,
+          street_number: formData.streetNumber?.trim() || null,
+          unit_number: formData.unitNumber?.trim() || null,
+          street_name: formData.streetName?.trim() || null,
+          po_box: formData.poBox?.trim() || null,
+          city: formData.city?.trim() || null,
+          province: formData.province?.trim() || null,
+          postal_code: formData.postalCode?.trim() || null,
+          status: 'submitted'
+      };
 
- const submissionData = {
-      ...Object.entries(fieldMapping).reduce((acc, [clientKey, serverKey]) => ({
-        ...acc,
-        [serverKey]: formData[clientKey] || null
-      }), {}),
-      status: 'submitted'
-    };
+      const response = isEdit 
+          ? await driverLicenseApi.editApplication(initialData.id, submissionData)
+          : await driverLicenseApi.submitApplication(submissionData);
 
-    const response = isEdit
-      ? await driverLicenseApi.createApplication(initialData.id, submissionData)
-      : await driverLicenseApi.submitApplication(submissionData);
-
-    setErrors({});
-    setModalMessage(`Application ${draftId ? 'updated' : 'submitted'} successfully!`);
-    setIsModalOpen(true);
-    toast.success(`Application ${isEdit ? 'updated' : 'submitted'} successfully!`);
-    onSubmitSuccess?.();
+      setErrors({});
+      setModalMessage(`Application ${isEdit ? 'updated' : 'submitted'} successfully!`);
+      setIsModalOpen(true);
+      toast.success(`Application ${isEdit ? 'updated' : 'submitted'} successfully!`);
+      onSubmitSuccess?.();
   } catch (error) {
-    console.error('Submission error:', error);
-    toast.error(error.response?.data?.detail || 'Submission failed. Please try again.');
+      console.error('Submission error:', error);
+      toast.error(error.response?.data?.detail || 'Submission failed. Please try again.');
   } finally {
-    setIsSubmitting(false);
+      setIsSubmitting(false);
   }
 };
 
