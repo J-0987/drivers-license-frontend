@@ -181,8 +181,14 @@ const handleSave = async () => {
      if (isLoading) return <div>Loading...</div>;
      if (error) return <div>Error: {error}</div>;
 
-  return (
+     return (
     <div className="applications-list">
+      {/* <div style={{ width: '100%', backgroundColor: 'white' }}>
+        <h1 style={{ textAlign: 'center', fontWeight: 600, color: 'black' }}>
+          Applications List
+        </h1>
+      </div> */}
+      
       {applications.map((app) => (
         <Card
           key={app.id}
@@ -196,30 +202,30 @@ const handleSave = async () => {
         </Card>
       ))}
 
-<Modal isOpen={isModalOpen} onClose={handleModalClose}>
-  {!showSuccess ? (
-    <MainForm
-      initialData={selectedApplication}
-      isEdit={true}
-      onSubmit={(formData) => handleSubmit(formData, true)}
-      isSubmitting={true}
-      onSave={handleSave}
-      onSubmitSuccess={() => fetchApplications()}
-      onFormChange={(formData) => {
-        setHasUnsavedChanges(true);
-        setCurrentFormData(formData);
-      }}
-    />
-  ) : (
-    <Success 
-      message="Application saved successfully!"
-      onClose={() => {
-        setShowSuccess(false);
-        setIsModalOpen(false);
-      }}
-    />
-  )}
-</Modal>
+      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+        {!showSuccess ? (
+          <MainForm
+            initialData={selectedApplication}
+            isEdit={true}
+            onSubmit={(formData) => handleSubmit(formData, true)}
+            isSubmitting={true}
+            onSave={handleSave}
+            onSubmitSuccess={() => fetchApplications()}
+            onFormChange={(formData) => {
+              setHasUnsavedChanges(true);
+              setCurrentFormData(formData);
+            }}
+          />
+        ) : (
+          <Success 
+            message="Application saved successfully!"
+            onClose={() => {
+              setShowSuccess(false);
+              setIsModalOpen(false);
+            }}
+          />
+        )}
+      </Modal>
       {/* <ConfirmDialog
       isOpen={showConfirmDialog}
       onSave={handleSave}

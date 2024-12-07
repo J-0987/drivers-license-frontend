@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../../assets/ontario-logo.jpg';
 import './NavBar.scss';
 
 const NavBar = () => {
@@ -26,7 +27,14 @@ const NavBar = () => {
     <nav className='navbar'>
       <div className='navbar__logo'>
         <Link to="/">
-          <h1>Ontario</h1>
+        <div className='navbar__logo'>
+        <Link to="/">
+          <div className="logo-container">
+            {/* <img className="logo-image" src={logo} alt="ontario-logo" /> */}
+            <h1>Ontario</h1>
+          </div>
+        </Link>
+      </div>
         </Link>
       </div>
       <div className='navbar__menu' ref={menuRef}>
