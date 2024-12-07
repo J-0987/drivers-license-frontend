@@ -1,0 +1,118 @@
+@use "../../styles/mixins" as *;
+@use "../../styles/variables" as *;
+
+.edit-method {
+  background-color: #ededed;
+  padding: $padding-16 $padding-32 $padding-32 $padding-32;
+  margin-top: 2rem;
+
+  &__header {
+    margin-bottom: $padding-16;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $padding-16;
+    padding: $padding-8;
+    margin-top: 2rem;
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    color: $dark-brown;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  &__input,
+  &__textarea,
+  &__select {
+    margin-top: $padding-8;
+    padding: $padding-16;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: $dark-brown;
+    background-color: $off-white;
+
+    &:focus {
+      outline: 2px solid $green;
+      border-color: $green;
+    }
+
+    &--error {
+      border-color: $light-green;
+      background-color: lighten($light-green, 30%);
+    }
+  }
+
+  &__error {
+    margin-top: $padding-8;
+    font-size: 0.875rem;
+    color: $brown;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: $padding-16;
+    margin-top: $padding-16;
+  }
+
+  &__button {
+    padding: $padding-16 $padding-32;
+    font-size: 1rem;
+    font-weight: bold;
+    color: $off-white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    flex: 1;
+
+    &--submit {
+      background-color: $green;
+
+      &:hover {
+        background-color: $light-green;
+      }
+
+      &:active {
+        background-color: darken($green, 10%);
+      }
+    }
+
+    &--cancel {
+      background-color: $brown;
+
+      &:hover {
+        background-color: lighten($brown, 10%);
+      }
+
+      &:active {
+        background-color: darken($brown, 10%);
+      }
+    }
+  }
+
+  @include tablet {
+    &__form {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    &__label {
+      flex: 1 1 calc(50% - #{$padding-16});
+    }
+
+    &__buttons {
+      width: 100%;
+    }
+  }
+
+  @include desktop {
+    &__label {
+      flex: 1 1 calc(33.33% - #{$padding-16});
+    }
+  }
+}

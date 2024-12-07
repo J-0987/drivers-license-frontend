@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { driverLicenseApi } from '../api/driverLicense';
 import { toast } from 'react-toastify';
 import PersonalDetails from '../components/form-sections/PersonalDetails';
@@ -6,9 +6,8 @@ import AddressDetails from '../components/form-sections/AddressDetails';
 import SaveBtn from '../components/form-controls/SaveBtn';
 import SubmitBtn from '../components/form-controls/SubmitBtn';
 import ResetBtn from '../components/form-controls/ResetBtn';
-import { v4 as uuidv4 } from 'uuid';
 
-const MainForm = () => {
+const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess, onFormChange }) => {
   const initialFormState = {
     lastName: '',
     firstName: '',
@@ -25,23 +24,43 @@ const MainForm = () => {
     province: '',
     postalCode: '',
   };
-  
-  
 
-  const [formData, setFormData] = useState(initialFormState);
+  const [formData, setFormData] = useState(initialData || initialFormState);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        lastName: initialData.last_name,
+        firstName: initialData.first_name,
+        middleName: initialData.middle_name || '',
+        licenseNumber: initialData.license_number || '',
+        dateOfBirth: initialData.date_of_birth || '',
+        sex: initialData.sex || '',
+        height: initialData.height_cm || '',
+        unitNumber: initialData.unit_number || '',
+        streetNumber: initialData.street_number || '',
+        streetName: initialData.street_name || '',
+        poBox: initialData.po_box || '',
+        city: initialData.city || '',
+        province: initialData.province || '',
+        postalCode: initialData.postal_code || ''
+      });
+    }
+  }, [initialData]);
+
   const onInputChange = (field, value) => {
     setFormData((prevData) => ({
       ...prevData,
       [field]: value,
     }));
+    onFormChange?.();
   };
-  
+
   const validateForm = (isDraft = false) => {
     const newErrors = {};
-  
-    //Draft validation
+
     if (isDraft) {
       if (!formData.lastName.trim()) {
         newErrors.lastName = 'Last name is required';
@@ -52,61 +71,36 @@ const MainForm = () => {
       setErrors(newErrors);
       return Object.keys(newErrors).length === 0;
     }
-    // Personal Details Validation - only enforce certain fields for submission
-    if (!isDraft) {
-      if (!formData.lastName.trim()) {
-        newErrors.lastName = 'Last name is required';
-      }
-      if (!formData.firstName.trim()) {
-        newErrors.firstName = 'First name is required';
-      }
-      if (!formData.dateOfBirth) {
-        newErrors.dateOfBirth = 'Date of birth is required';
-      }
-      if (!formData.sex) {
-        newErrors.sex = 'Sex is required';
-      }
-      if (!formData.height) {
-        newErrors.height = 'Height is required';
-      }
-  
-      // Address Validation for Submission
-      if (!formData.streetNumber) {
-        newErrors.streetNumber = 'Street number is required';
-      }
-      if (!formData.streetName.trim()) {
-        newErrors.streetName = 'Street name is required';
-      }
-      if (!formData.city.trim()) {
-        newErrors.city = 'City is required';
-      }
-      if (!formData.province) {
-        newErrors.province = 'Province is required';
-      }
-      if (!formData.postalCode.trim()) {
-        newErrors.postalCode = 'Postal code is required';
 
-      }
+    // Full validation for submission
+    if (!isDraft) {
+      // Personal Details
+      if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+      if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+      if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+      if (!formData.sex) newErrors.sex = 'Sex is required';
+      if (!formData.height) newErrors.height = 'Height is required';
+
+      // Address Details
+      if (!formData.streetNumber) newErrors.streetNumber = 'Street number is required';
+      if (!formData.streetName.trim()) newErrors.streetName = 'Street name is required';
+      if (!formData.city.trim()) newErrors.city = 'City is required';
+      if (!formData.province) newErrors.province = 'Province is required';
+      if (!formData.postalCode.trim()) newErrors.postalCode = 'Postal code is required';
     }
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
-  
+
   const handleSave = async () => {
     try {
-      // Minimal validation for draft save
       if (!validateForm(true)) {
         toast.error('Please fill in your first and last name to save draft.');
         return;
       }
-  
 
-  
-      // Set draft status explicitly
       const draftData = {
-       
         last_name: formData.lastName,
         first_name: formData.firstName,
         middle_name: formData.middleName || null,
@@ -123,25 +117,18 @@ const MainForm = () => {
         postal_code: formData.postalCode || null,
         status: 'draft',
       };
-  
-      // API call to save the draft
-      const response = await driverLicenseApi.createApplication(draftData);
-      console.log('Draft saved:', response);
-  
-      // Show success message
-      toast.success('Draft saved successfully!');
+
+      const response = isEdit
+        ? await driverLicenseApi.editApplication(initialData.id, draftData)
+        : await driverLicenseApi.createApplication(draftData);
+
+      toast.success(`Draft ${isEdit ? 'updated' : 'saved'} successfully!`);
+      onSubmitSuccess?.();
     } catch (error) {
       console.error('Save draft error:', error);
-  
-      if (error.response?.data?.detail) {
-        toast.error(`Error saving draft: ${error.response.data.detail}`);
-      } else {
-        toast.error('Failed to save the draft. Please try again.');
-      }
+      toast.error(error.response?.data?.detail || 'Failed to save the draft. Please try again.');
     }
   };
-  
- 
 
   const handleReset = () => {
     setFormData(initialFormState);
@@ -150,17 +137,15 @@ const MainForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!validateForm()) {
       toast.error('Please fix the form errors before submitting');
       return;
     }
-  
+
     setIsSubmitting(true);
     try {
-    
       const formattedData = {
-       
         last_name: formData.lastName.trim(),
         first_name: formData.firstName.trim(),
         middle_name: formData.middleName?.trim() || null,
@@ -175,12 +160,16 @@ const MainForm = () => {
         city: formData.city.trim(),
         province: formData.province.trim(),
         postal_code: formData.postalCode.trim(),
+        status: 'submitted',
       };
-  
-      const response = await driverLicenseApi.submitApplication(formattedData);
-      console.log('Submission response:', response);
-      toast.success('License application submitted successfully!');
-      handleReset();
+
+      const response = isEdit
+        ? await driverLicenseApi.editApplication(initialData.id, formattedData)
+        : await driverLicenseApi.submitApplication(formattedData);
+
+      toast.success(`Application ${isEdit ? 'updated' : 'submitted'} successfully!`);
+      onSubmitSuccess?.();
+      if (!isEdit) handleReset();
     } catch (error) {
       console.error('Submission error:', error);
       toast.error('Submission failed. Please try again.');
@@ -188,24 +177,22 @@ const MainForm = () => {
       setIsSubmitting(false);
     }
   };
-  
-  
 
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Ontario Driver's License Application</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {isEdit ? 'Edit Driver\'s License Application' : 'Ontario Driver\'s License Application'}
+      </h1>
 
       <PersonalDetails
         data={formData}
-        onInputChange={(field, value) => onInputChange( field, value)}
+        onInputChange={onInputChange}
         errors={errors}
       />
 
       <AddressDetails
         data={formData}
-        onInputChange={(field, value) =>
-          onInputChange(field, value)
-        }
+        onInputChange={onInputChange}
         errors={errors}
       />
 
@@ -214,7 +201,7 @@ const MainForm = () => {
       <div className="flex space-x-4 mt-6">
         <SaveBtn onClick={handleSave} disabled={isSubmitting} />
         <SubmitBtn type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Submit'}
+          {isSubmitting ? 'Submitting...' : isEdit ? 'Update' : 'Submit'}
         </SubmitBtn>
         <ResetBtn onClick={handleReset} disabled={isSubmitting} />
       </div>
@@ -223,13 +210,3 @@ const MainForm = () => {
 };
 
 export default MainForm;
-
-
-
-
-
-
-
-
-
-

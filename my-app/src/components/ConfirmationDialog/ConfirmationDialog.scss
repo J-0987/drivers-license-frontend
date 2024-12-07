@@ -1,0 +1,57 @@
+.applications-list {
+    display: grid;
+    gap: $padding-16;
+    padding: $padding-16;
+    
+    @media (min-width: $tablet-breakpoint) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    @media (min-width: $desktop-breakpoint) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .card {
+    border-radius: 8px;
+    padding: $padding-16;
+    box-shadow: 0 2px 4px rgba($dark-brown, 0.1);
+  
+    &[data-status="submitted"] {
+      background-color: $leaf-green;
+    }
+  
+    &[data-status="draft"] {
+      background-color: $light-purple;
+    }
+  
+    h3 {
+      color: $dark-brown;
+      margin-bottom: $padding-8;
+      font-size: 1.1rem;
+    }
+  
+    p {
+      color: $dark-brown;
+      margin-bottom: $padding-16;
+    }
+  
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: $padding-8;
+  
+      .icon-button {
+        background: none;
+        border: none;
+        padding: $padding-8;
+        color: $dark-brown;
+        cursor: pointer;
+        transition: opacity 0.2s;
+  
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+  }

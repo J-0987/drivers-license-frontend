@@ -1,0 +1,82 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $dark-brown;
+    z-index: 4;
+  }
+
+  
+  .modal__content {
+    width: 100%;      // Add this
+    height: 100%;     // Add this
+    overflow-y: auto; // Add this
+  }
+
+
+  .modal {
+    background-color: $off-white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 90%;  // Add this
+  max-height: 90vh; // Add this
+  overflow-y: auto; // Add this
+  width: 100%;      // Add this
+  }
+  
+  .modal-buttons {
+    margin-top: 20px;
+  }
+  
+  .confirm-button, .cancel-button {
+    margin: 0 10px;
+    padding: .5rem 1rem;
+    cursor: pointer;
+    border-radius: 1rem;
+  }
+  
+  .confirm-button {
+    background-color: $brown;
+    color: $off-white;
+    border: none;
+  }
+  
+  .cancel-button {
+    background-color: $off-white;
+  }
+
+
+  .modal {
+    position: relative;  // Add this for absolute positioning of close button
+    
+    &__close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $dark-brown;
+      z-index: 5;
+      
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
