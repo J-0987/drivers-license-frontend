@@ -60,68 +60,107 @@ const MainForm = ({ initialData = null, isEdit = false, onSubmitSuccess, onFormC
 
   const validateForm = (isDraft = false) => {
     const newErrors = {};
-
-    if (isDraft) {
-      if (!formData.lastName.trim()) {
-        newErrors.lastName = 'Last name is required';
+    const requiredFields = {
+      basic: {
+        firstName: 'First name',
+        lastName: 'Last name'
+      },
+      full: {
+        dateOfBirth: 'Date of birth',
+        sex: 'Sex',
+        height: 'Height',
+        streetNumber: 'Street number',
+        streetName: 'Street name',
+        city: 'City',
+        province: 'Province',
+        postalCode: 'Postal code'
       }
-      if (!formData.firstName.trim()) {
-        newErrors.firstName = 'First name is required';
+    };
+  
+    // Clear previous errors
+    setErrors({});
+  
+    // Validate basic fields (required for both draft and submission)
+    Object.entries(requiredFields.basic).forEach(([field, label]) => {
+      if (!formData[field] || formData[field].trim() === '') {
+        newErrors[field] = `${label} is required`;
       }
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    }
-
-    // Full validation for submission
+    });
+  
+    // If not a draft, validate all required fields
     if (!isDraft) {
-      // Personal Details
-      if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-      if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-      if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-      if (!formData.sex) newErrors.sex = 'Sex is required';
-      if (!formData.height) newErrors.height = 'Height is required';
-
-      // Address Details
-      if (!formData.streetNumber) newErrors.streetNumber = 'Street number is required';
-      if (!formData.streetName.trim()) newErrors.streetName = 'Street name is required';
-      if (!formData.city.trim()) newErrors.city = 'City is required';
-      if (!formData.province) newErrors.province = 'Province is required';
-      if (!formData.postalCode.trim()) newErrors.postalCode = 'Postal code is required';
+      Object.entries(requiredFields.full).forEach(([field, label]) => {
+        if (field === 'height') {
+          if (!formData[field] || isNaN(formData[field]) || formData[field] <= 0) {
+            newErrors[field] = `${label} must be a valid number`;
+          }
+        } else if (!formData[field] || formData[field].trim() === '') {
+          newErrors[field] = `${label} is required`;
+        }
+      });
     }
-
+  
+    // Update errors state
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = async () => {
     try {
-      if (!validateForm(true)) {
-        toast.error('Please fill in your first and last name to save draft.');
+      // Clear previous errors
+      setErrors({});
+      
+      // Only validate first name and last name
+      const requiredFields = {
+        firstName: 'First name',
+        lastName: 'Last name'
+      };
+      
+      const newErrors = {};
+      Object.entries(requiredFields).forEach(([field, label]) => {
+        if (!formData[field] || formData[field].trim() === '') {
+          newErrors[field] = `${label} is required`;
+        }
+      });
+  
+      // Set errors and check if validation passed
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors); // Set validation errors
+        const missingFields = Object.keys(newErrors)
+          .map(field => requiredFields[field].toLowerCase())
+          .join(' and ');
+        toast.error(`Please fill in your ${missingFields} to save draft.`);
         return;
       }
-
-      const draftData = {
-        last_name: formData.lastName,
-        first_name: formData.firstName,
-        middle_name: formData.middleName || null,
-        license_number: formData.licenseNumber || null,
-        date_of_birth: formData.dateOfBirth || null,
-        sex: formData.sex || null,
-        height_cm: formData.height || null,
-        street_number: formData.streetNumber || null,
-        unit_number: formData.unitNumber || null,
-        street_name: formData.streetName || null,
-        po_box: formData.poBox || null,
-        city: formData.city || null,
-        province: formData.province || null,
-        postal_code: formData.postalCode || null,
-        status: 'draft',
+  
+      const fieldMapping = {
+        lastName: 'last_name',
+        firstName: 'first_name',
+        middleName: 'middle_name',
+        licenseNumber: 'license_number',
+        dateOfBirth: 'date_of_birth',
+        sex: 'sex',
+        height: 'height_cm',
+        streetNumber: 'street_number',
+        unitNumber: 'unit_number',
+        streetName: 'street_name',
+        poBox: 'po_box',
+        city: 'city',
+        province: 'province',
+        postalCode: 'postal_code'
       };
-
+  
+      const draftData = Object.entries(fieldMapping).reduce((acc, [clientKey, serverKey]) => ({
+        ...acc,
+        [serverKey]: formData[clientKey] || null
+      }), { status: 'draft' });
+  
       const response = isEdit
         ? await driverLicenseApi.editApplication(initialData.id, draftData)
         : await driverLicenseApi.createApplication(draftData);
-
+  
+      // Clear errors after successful save
+      setErrors({});
       toast.success(`Draft ${isEdit ? 'updated' : 'saved'} successfully!`);
       onSubmitSuccess?.();
     } catch (error) {

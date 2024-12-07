@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { driverLicenseApi } from "../api/driverLicense";
 import Card from "../components/Card/Card";
@@ -128,15 +129,48 @@ const [showConfirmDialog, setShowConfirmDialog] = useState(false);
    
   };
 
-  const handleSave = async () => {
-    setShowConfirmDialog(false);
-    try {
-      await handleSubmit(currentFormData, true);
-      setShowSuccess(true); // Show success component after save
-    } catch (error) {
-      toast.error("Failed to save changes");
-    }
+  const validateFormDraft = () => {
+    const newError = {};
+ if (!currentFormData.firstName.trim()) newError.firstName = 'First name is required';
+    if (!currentFormData.lastName.trim()) newError.lastName = 'Last name is required';
+    setError(newError);
+    return Object.keys(newError).length === 0;
   };
+
+const handleSave = async () => {
+  try {
+    if (!validateFormDraft()) {
+      toast.error('Please fill in your first and last name to save draft.');
+      return;
+    }
+
+    const draftData = {
+      last_name: currentFormData.lastName,
+      first_name: currentFormData.firstName,
+      middle_name: currentFormData.middleName || null,
+      license_number: currentFormData.licenseNumber || null,
+      date_of_birth: currentFormData.dateOfBirth || null,
+      sex: currentFormData.sex || null,
+      height_cm: currentFormData.height || null,
+      street_number: currentFormData.streetNumber || null,
+      unit_number: currentFormData.unitNumber || null,
+      street_name: currentFormData.streetName || null,
+      po_box: currentFormData.poBox || null,
+      city: currentFormData.city || null,
+      province: currentFormData.province || null,
+      postal_code: currentFormData.postalCode || null,
+      status: 'draft'
+    };
+
+    await driverLicenseApi.editApplication(selectedApplication.id, draftData);
+    await fetchApplications();
+    setShowSuccess(true);
+    toast.success('Draft updated successfully!');
+} catch (error) {
+    console.error('Save error:', error);
+    toast.error('Failed to save changes');
+  }
+};
 
   const handleDiscardChanges = () => {
     setShowConfirmDialog(false);
@@ -162,8 +196,8 @@ const [showConfirmDialog, setShowConfirmDialog] = useState(false);
         </Card>
       ))}
 
-      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-  {selectedApplication && !showSuccess ? (
+<Modal isOpen={isModalOpen} onClose={handleModalClose}>
+  {!showSuccess ? (
     <MainForm
       initialData={selectedApplication}
       isEdit={true}
